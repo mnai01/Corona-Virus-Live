@@ -73,8 +73,8 @@ with open('CountryCount.txt', newline='\n') as csvfile:
             Continent = (f'{row[3]}')
             # Converts values into integers
             # Need to remove the comma, I think [0] referes to the first comma it reaches which is replace with empty space
-            numInfected = int(Infected.split()[0].replace(',', ''))
-            numDead = int(Dead.split()[0].replace(',', ''))
+            numInfected = int(Infected.[0].replace(',', ''))
+            numDead = int(Dead.[0].replace(',', ''))
             sql = ('INSERT INTO tbl_Outbreak(Country,Infected,Dead,Continent) VALUES ('"'{0}', '{1}', '{2}', '{3}')").format(
                 Country, numInfected, numDead, Continent)
             mycursor.execute(sql)
