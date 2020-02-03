@@ -3,19 +3,36 @@ from urllib.request import urlopen
 import csv
 import connect
 
+data = ''
+totalInfected = 0
+totalDead = 0
+totalCured = 0
+
 country_list_url = 'https://www.worldometers.info/coronavirus/countries-where-coronavirus-has-spread/'
 overview_url = 'https://www.worldometers.info/coronavirus/'
 # opening connection and reading info into variable
 country_list_html = urlopen(country_list_url).read()
+overview_html = urlopen(overview_url).read()
+
 # closing connection
 urlopen(country_list_url).close()
+urlopen(overview_url).close()
 
 # need to install pip install lxml if you want to do xml
 # html parsing
 country_list_soup = BeautifulSoup(country_list_html, 'lxml')
+overview_soup = BeautifulSoup(overview_html, 'lxml')
 
-# writes the parsed html data to a file while adding data to a string variable
-data = ''
+# Finds the amount cured
+totalOVcured = overview_soup.find_all(
+    'div', {'style': 'color:#8ACA2B '})
+
+for tag in totalOVcured:
+    tdtags = tag.find_all("span")
+    for tag in tdtags:
+        totalCured = int(tag.text)
+
+    # writes the parsed html data to a file while adding data to a string variable
 with open('CountryCount.txt', 'w') as file:
     for td_tag in country_list_soup.find_all('td'):
         file.write(td_tag.text)
@@ -73,10 +90,21 @@ with open('CountryCount.txt', newline='\n') as csvfile:
             Continent = (f'{row[3]}')
             # Converts values into integers
             # Need to remove the comma, I think [0] referes to the first comma it reaches which is replace with empty space
-            numInfected = int(Infected.[0].replace(',', ''))
-            numDead = int(Dead.[0].replace(',', ''))
+            numInfected = int(Infected.replace(',', ''))
+            numDead = int(Dead.replace(',', ''))
+            totalInfected += numInfected
+            totalDead += numDead
             sql = ('INSERT INTO tbl_Outbreak(Country,Infected,Dead,Continent) VALUES ('"'{0}', '{1}', '{2}', '{3}')").format(
                 Country, numInfected, numDead, Continent)
             mycursor.execute(sql)
             connect.mysql.commit()
             line_count += 1
+
+print('Sending Data to Database...', totalInfected)
+print('Sending Data to Database...', totalDead)
+print('Sending Data to Database...', totalCured)
+mycursor = connect.mysql.cursor()
+sql = ('INSERT INTO tbl_OutbreakTotals(Infected,Dead,Cured) VALUES ('"'{0}', '{1}', '{2}')").format(
+    totalInfected, totalDead, totalCured)
+mycursor.execute(sql)
+connect.mysql.commit()
