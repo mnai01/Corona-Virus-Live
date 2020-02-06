@@ -4,6 +4,9 @@ from urllib.request import urlopen
 import csv
 import connect
 
+# document.querySelectorAll(".maincounter-number") SEACHING ALL DIVS 
+
+
 data = ''
 totalInfected = 0
 totalDead = 0
@@ -31,7 +34,7 @@ totalOVcured = overview_soup.find_all(
 for tag in totalOVcured:
     tdtags = tag.find_all("span")
     for tag in tdtags:
-        totalCured = int(tag.text)
+        totalCured = int(tag.text.replace(',', ''))
 
     # writes the parsed html data to a file while adding data to a string variable
 with open('CountryCount.txt', 'w') as file:
