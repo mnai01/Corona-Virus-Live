@@ -11,7 +11,9 @@ Uses webscraping to collect information of the corona virus off the web and stor
 Everything else is stays in the same folder and is executed by running main.py**
 
 **Trigger for tbl_Outbreak**
+
 Time: Before
+
 Event: Insert
 ```sql
 INSERT INTO tbl_OutbreakHistory (Country, Infected, Dead, Continent, Date) VALUES (new.Country, new.Infected, new.Dead, new.Continent, new.Date)
