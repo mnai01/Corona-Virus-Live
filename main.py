@@ -36,16 +36,18 @@ overview_soup = BeautifulSoup(overview_html, 'lxml')
 
 # web scraped most recent infected total
 webTotalInfected = overview_soup.find(
-    'div', {"class": "maincounter-number"}).text
+    'div', {"class": "maincounter-number"}).text.replace(',', '').replace(" ", "")
 
 # gets our recent infected total from api
 results = requests.get('https://www.ianmatlak.com/api/stat.php')
 json = results.json()
-dbTotalInfected = ' ' + json['data'][0]['infected'] + '  '
+dbTotalInfected = json['data'][0]['infected']
 
 # compares if they are the same then end, if they are different then continue
 if(webTotalInfected == dbTotalInfected):
     print('true')
+    print(webTotalInfected)
+    print(dbTotalInfected)
     sys.exit()
 
 # Finds the amount cured
