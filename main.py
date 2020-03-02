@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import csv
 import connect
+import requests
+import sys
 
-# document.querySelectorAll(".maincounter-number") SEACHING ALL DIVS 
-
+# document.querySelectorAll(".maincounter-number") SEACHING ALL DIVS
 
 data = ''
 totalInfected = 0
@@ -26,6 +27,26 @@ urlopen(overview_url).close()
 # html parsing
 country_list_soup = BeautifulSoup(country_list_html, 'lxml')
 overview_soup = BeautifulSoup(overview_html, 'lxml')
+
+# used to write overview_soup to file, need to cast it as str
+# fileformatOverview = overview_soup.prettify('utf-8')
+
+# gets the date of last updated from page
+# overview_soup.find('div', style=lambda value: value and 'font-size:13px' in value and 'color:#999' in value):
+
+# web scraped most recent infected total
+webTotalInfected = overview_soup.find(
+    'div', {"class": "maincounter-number"}).text
+
+# gets our recent infected total from api
+results = requests.get('https://www.ianmatlak.com/api/stat.php')
+json = results.json()
+dbTotalInfected = ' ' + json['data'][0]['infected'] + '  '
+
+# compares if they are the same then end, if they are different then continue
+if(webTotalInfected == dbTotalInfected):
+    print('true')
+    sys.exit()
 
 # Finds the amount cured
 totalOVcured = overview_soup.find_all(
@@ -75,6 +96,7 @@ with open('CountryCount.txt', newline='\n') as csvfile:
     csv_reader = csv.reader(csvfile, delimiter=':')
     line_count = 0
     # Open connection to database
+
     mycursor = connect.mysql.cursor()
     # delete and recreate table
     print('DELETING OLD RECCORDS...')

@@ -1,10 +1,14 @@
 # Corona-virus-ometer
+
 Python 3.8.0
 Required packages:
+
 ```
 pip3 install mysql-connector-python
 pip3 install beautifulsoup4
+pip3 install requests
 ```
+
 Uses webscraping to collect information of the corona virus off the web and stores it in a database.
 
 **connection.php and index.php are help on the webserver.
@@ -15,10 +19,13 @@ Everything else is stays in the same folder and is executed by running main.py**
 Time: Before
 
 Event: Insert
+
 ```sql
 INSERT INTO tbl_OutbreakHistory (Country, Infected, Dead, Continent, Date) VALUES (new.Country, new.Infected, new.Dead, new.Continent, new.Date)
 ```
+
 **Table Layout**
+
 ```sql
 CREATE TABLE `tbl_Outbreak` (
  `Country` varchar(20) NOT NULL,
