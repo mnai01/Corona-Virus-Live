@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import csv
-#import connect
+import connect
 import requests
 import sys
 
@@ -107,11 +107,11 @@ with open('CountryCount.txt', newline='\n') as csvfile:
     line_count = 0
     # Open connection to database
 
-    #mycursor = connect.mysql.cursor()
+    mycursor = connect.mysql.cursor()
     # delete and recreate table
     print('DELETING OLD RECCORDS...')
     sql = ('TRUNCATE TABLE tbl_Outbreak')
-    # mycursor.execute(sql)
+    mycursor.execute(sql)
     # iterates through the rows of each data. Each row has 4 colums and can be acces with an array
     for row in csv_reader:
         if line_count == 0:
@@ -132,21 +132,15 @@ with open('CountryCount.txt', newline='\n') as csvfile:
             totalDead += numDead
             sql = ('INSERT INTO tbl_Outbreak(Country,Infected,Dead,Continent) VALUES ('"'{0}', '{1}', '{2}', '{3}')").format(
                 Country, numInfected, numDead, Continent)
-            # mycursor.execute(sql)
-            # connect.mysql.commit()
+            mycursor.execute(sql)
+            connect.mysql.commit()
             line_count += 1
 
 print('Sending Data to Database...', totalInfected)
 print('Sending Data to Database...', totalDead)
 print('Sending Data to Database...', totalCured)
-#mycursor = connect.mysql.cursor()
+mycursor = connect.mysql.cursor()
 sql = ('INSERT INTO tbl_OutbreakTotals(Infected,Dead,Cured) VALUES ('"'{0}', '{1}', '{2}')").format(
     totalInfected, totalDead, totalCured)
-# mycursor.execute(sql)
-# connect.mysql.commit()
-print(webTotalInfectedDead[0].text.replace(',', '').replace(" ", ""))
-print(dbTotalInfected)
-print(webTotalInfectedDead[1].text.replace(',', '').replace(" ", ""))
-print(dbTotalDead)
-print(totalCured)
-print(dbTotalCured)
+mycursor.execute(sql)
+connect.mysql.commit()
