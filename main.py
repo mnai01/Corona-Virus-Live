@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import csv
-import connect
+#import connect
 import requests
 import sys
 
@@ -35,20 +35,14 @@ overview_soup = BeautifulSoup(overview_html, 'lxml')
 # overview_soup.find('div', style=lambda value: value and 'font-size:13px' in value and 'color:#999' in value):
 
 # web scraped most recent infected total
-webTotalInfected = overview_soup.find(
-    'div', {"class": "maincounter-number"}).text.replace(',', '').replace(" ", "")
+webTotalInfectedDead = overview_soup.find_all(
+    'div', {"class": "maincounter-number"})
 
-# gets our recent infected total from api
-results = requests.get('https://www.ianmatlak.com/api/stat.php')
-json = results.json()
-dbTotalInfected = json['data'][0]['infected']
+webTotalInfected = webTotalInfectedDead[0].text.replace(
+    ',', '').replace(" ", "")
 
-# compares if they are the same then end, if they are different then continue
-if(webTotalInfected == dbTotalInfected):
-    print('true')
-    print(webTotalInfected)
-    print(dbTotalInfected)
-    sys.exit()
+webTotalDead = webTotalInfectedDead[1].text.replace(
+    ',', '').replace(" ", "")
 
 # Finds the amount cured
 totalOVcured = overview_soup.find_all(
@@ -59,7 +53,21 @@ for tag in totalOVcured:
     for tag in tdtags:
         totalCured = int(tag.text.replace(',', ''))
 
-    # writes the parsed html data to a file while adding data to a string variable
+# gets our recent infected total from api
+results = requests.get('https://www.ianmatlak.com/api/stat.php')
+json = results.json()
+dbTotalInfected = json['data'][0]['infected']
+dbTotalDead = json['data'][0]['dead']
+dbTotalCured = json['data'][0]['cured']
+
+# compares if they are the same then end, if they are different then continue
+if(webTotalInfected == dbTotalInfected and webTotalDead == dbTotalDead and str(totalCured) == dbTotalCured):
+    print('true')
+    print(webTotalInfectedDead[0])
+    print(dbTotalInfected)
+    sys.exit()
+
+# writes the parsed html data to a file while adding data to a string variable
 with open('CountryCount.txt', 'w') as file:
     for td_tag in country_list_soup.find_all('td'):
         file.write(td_tag.text)
@@ -99,11 +107,11 @@ with open('CountryCount.txt', newline='\n') as csvfile:
     line_count = 0
     # Open connection to database
 
-    mycursor = connect.mysql.cursor()
+    #mycursor = connect.mysql.cursor()
     # delete and recreate table
     print('DELETING OLD RECCORDS...')
     sql = ('TRUNCATE TABLE tbl_Outbreak')
-    mycursor.execute(sql)
+    # mycursor.execute(sql)
     # iterates through the rows of each data. Each row has 4 colums and can be acces with an array
     for row in csv_reader:
         if line_count == 0:
@@ -124,15 +132,21 @@ with open('CountryCount.txt', newline='\n') as csvfile:
             totalDead += numDead
             sql = ('INSERT INTO tbl_Outbreak(Country,Infected,Dead,Continent) VALUES ('"'{0}', '{1}', '{2}', '{3}')").format(
                 Country, numInfected, numDead, Continent)
-            mycursor.execute(sql)
-            connect.mysql.commit()
+            # mycursor.execute(sql)
+            # connect.mysql.commit()
             line_count += 1
 
 print('Sending Data to Database...', totalInfected)
 print('Sending Data to Database...', totalDead)
 print('Sending Data to Database...', totalCured)
-mycursor = connect.mysql.cursor()
+#mycursor = connect.mysql.cursor()
 sql = ('INSERT INTO tbl_OutbreakTotals(Infected,Dead,Cured) VALUES ('"'{0}', '{1}', '{2}')").format(
     totalInfected, totalDead, totalCured)
-mycursor.execute(sql)
-connect.mysql.commit()
+# mycursor.execute(sql)
+# connect.mysql.commit()
+print(webTotalInfectedDead[0].text.replace(',', '').replace(" ", ""))
+print(dbTotalInfected)
+print(webTotalInfectedDead[1].text.replace(',', '').replace(" ", ""))
+print(dbTotalDead)
+print(totalCured)
+print(dbTotalCured)
