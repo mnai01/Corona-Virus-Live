@@ -30,7 +30,7 @@ with open('NewCountryCount.txt', 'w') as file:
     # sets variable to equal a function that returns a list of lines
     # essentially it makes each line be represented by lines_iters
     lines_iters = iter(data.splitlines())
-    file.write("Country;Total Cases;New Cases;New Deaths;Total Recovered;Active Cases;Serious Critical;Total Cases/1Million Population\n")
+    file.write("Country;Total Cases;New Cases;Total Deaths;New Deaths;Total Recovered;Active Cases;Serious Critical;Total Cases/1Million Population\n")
     # takes the 1st 4 elements in the iterable and put them in country_infected_deaths_continent
     for country_infected_deaths_continent in zip(lines_iters, lines_iters, lines_iters, lines_iters, lines_iters, lines_iters, lines_iters, lines_iters, lines_iters):
         print('Re-Formatting Data to file...')
@@ -71,6 +71,7 @@ with open('NewCountryCount.txt', newline='\n') as csvfile:
             Tot_Cases_1Mil_Pop = (f'{row[8]}')
 
             # Converts values into integers
+            Total_Deaths = Total_Deaths.replace(' ', '')
             Total_Cases = int(Total_Cases.replace(',', ''))
             Active_Cases = int(Active_Cases.replace(',', ''))
             sql = ('INSERT INTO tbl_OutbreakDetailed(Country,Total_Cases,New_Cases,Total_Deaths,New_Deaths,Total_Recovered,Active_Cases,Serious_Critical,TotCasesOf1MilPop) VALUES ('"'{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')").format(
