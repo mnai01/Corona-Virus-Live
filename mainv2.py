@@ -75,8 +75,8 @@ with open('NewCountryCount.txt', newline='\n') as csvfile:
             Total_Deaths = Total_Deaths.replace(' ', '')
             Total_Cases = int(Total_Cases.replace(',', ''))
             Active_Cases = int(Active_Cases.replace(',', ''))
-            sql = ('INSERT INTO tbl_OutbreakDetailed(Country,Total_Cases,New_Cases,Total_Deaths,New_Deaths,Total_Recovered,Active_Cases,Serious_Critical,TotCasesOf1MilPop) VALUES ('"'{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')").format(
-                Country, Total_Cases, New_Cases, Total_Deaths, New_Deaths, Total_Recovered, Active_Cases, Serious_Critical, Tot_Cases_1Mil_Pop)
+            sql = ('INSERT INTO tbl_OutbreakDetailed(Country,Total_Cases,New_Cases,Total_Deaths,New_Deaths,Total_Recovered,Active_Cases,Serious_Critical,TotCasesOf1MilPop,TotDeathsOf1MilPop) VALUES ('"'{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}' )").format(
+                Country, Total_Cases, New_Cases, Total_Deaths, New_Deaths, Total_Recovered, Active_Cases, Serious_Critical, Tot_Cases_1Mil_Pop, Tot_Deaths_1Mil_Pop)
             mycursor.execute(sql)
             connect.mysql.commit()
             line_count += 1
